@@ -1,0 +1,32 @@
+//treemap
+
+.sv-dashboard.sv-treemap{
+  .dashboard-item{
+    height: 2*@height + @margin;
+    .item-info{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(~'100% - 56px');
+      .sv-treemap-chart{
+        position: relative;
+        .inner-treemap{
+          cursor: pointer;
+        }
+        .outer-treemap{
+          .sv-t-rect{
+            &:hover{
+              opacity: .8;
+            }
+          }
+        }
+        .sv-t-hidden-text{
+          max-width: 0;
+          opacity: 0;
+          transition: none;
+        }
+        .sv-t-grandparent{cursor: pointer;}
+      }
+    }
+  }
+}

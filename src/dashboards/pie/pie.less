@@ -1,0 +1,128 @@
+//pie
+
+.sv-dashboard.sv-pie{
+  max-width: @lg-size;
+  min-width: @sm-size;
+  min-height: @sm-size;
+  width: 100%;
+  .item-info {
+    flex-wrap: wrap;
+    padding: (@padding + @padding-step) @padding;
+    position: relative;
+    align-items: center;
+    height: calc(~'100% - 56px');
+    .sv-block{
+      width: 60%;
+      display: flex;
+      align-items: center;
+      &.sv-pie-histogram{width: 40%;}
+      .sv-pie-legend{
+        ul{
+          margin: 0;
+          padding: 0;
+          li{
+            list-style: none;
+            font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #242e36;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            span{margin-right: 12px;}
+            & + li{margin-top: 20px;}
+          }
+        }
+      }
+      .sv-pie-chart{
+        padding: 24px;
+        .arc{
+          cursor: pointer;
+          opacity: 1;
+          transition: .2s opacity;
+          &:hover{
+            opacity: .9;
+            transition: .2s opacity;
+          }
+        }
+      }
+    }
+
+    .legend{
+      width: 100%;
+      display: flex;
+      padding: 0 16px;
+      justify-content: flex-end;
+      position: absolute;
+      left: 0;
+      top: @padding + @padding-step;
+      svg{
+        display: block;
+        margin-right: 16px;
+        text{
+          fill: #242e36;
+          font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+        }
+        &:last-child{margin: 0;}
+      }
+    }
+  }
+  .x-axis .tick line{
+      stroke: transparent
+  }
+
+  .y-axis .tick line{
+      stroke-linecap: round;
+      stroke: rgba(36, 46, 54, 0.2);
+      stroke-width: .5;
+  }
+
+  .x-axis text, .y-axis text{
+    font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.5;
+    fill: fade(@color, 40%);
+  }
+
+  .x-axis text{
+    font-size: 10px;
+  }
+
+  .y-axis-label,
+  .x-axis-label{
+    font-size: 10px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.5;
+    fill: fade(@color, 40%);
+    font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+  }
+
+  .domain{
+    display: none;
+  }
+}
+
+
+@media screen and (max-width: 800px) {
+  .sv-dashboard.sv-pie {
+    overflow-x: auto;
+    border: 1px solid #e9eaeb;
+    .dashboard-item{
+      width: 100%;
+    }
+    .item-info {
+      .sv-block{
+        width: 100%;
+        justify-content: center;
+        &.sv-pie-histogram {
+          display: none;
+        }
+      }
+    }
+  }
+}

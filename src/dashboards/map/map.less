@@ -1,0 +1,203 @@
+// @import '~/leaflet/dist/leaflet.css';
+
+@map-header-height: 52px;
+@blue-color: #317dc7;
+@padding: 16px;
+@color: #242e36;
+
+.sv-dashboard.sv-geomap {
+  font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+
+  h3 {
+    color: rgba(36, 46, 54, 0.6);
+    font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  .sv-geomap {
+    margin: 50px auto;
+  }
+
+  .item-info {
+    padding: 0 16px 16px;
+    height: auto;
+    display: block;
+  }
+
+  .sv-map-header {
+    display: flex;
+    width: 100%;
+    height: @map-header-height;
+    align-items: center;
+    font-size: 14px;
+
+    .sv-map-label {
+      width: 100%;
+      text-align: right;
+      color: rgba(36, 46, 54, 0.4);
+    }
+
+    .sv-map-back {
+      color: @blue-color;
+      white-space: nowrap;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .sv-map-back--hidden {
+      visibility: hidden;
+      backface-visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  .sv-map {
+    width: 100%;
+    height: 380px;
+    border: 1px solid rgba(36, 46, 54, 0.1);
+    margin: 0 0 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sv-map-table {
+    border-top: 1px solid rgba(36, 46, 54, 0.1);
+    border-bottom: 1px solid rgba(36, 46, 54, 0.1);
+    padding: @padding 0;
+  }
+
+  .s-table-wrap {
+    height: 350px;
+    overflow: auto;
+    width: 100%;
+  }
+
+  .s-table-wrap--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .s-table{
+    width: 100%;
+    border-collapse: collapse;
+    tr {
+      th {
+        padding: 10px @padding;
+        font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: fade(@color, 60%);
+        text-align: right;
+        white-space: nowrap;
+        vertical-align: middle;
+
+        p {
+          margin: 0;
+          padding: 0;
+          text-align: right;
+        }
+
+        &.item-1 {
+          text-align: left;
+          width: 50%;
+
+          p{
+            text-align: left;
+          }
+        }
+
+        .target {
+          cursor: pointer;
+          display: inline-block;
+          vertical-align: middle;
+          max-width: 100px;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .s-array {
+          width: 16px;
+          height: 16px;
+          display: inline-block;
+          vertical-align: middle;
+
+          path {
+            fill: fade(@color, 50%);
+          }
+        }
+
+        &.extend {
+          padding-left: 0;
+        }
+      }
+
+      td {
+        padding: 10px @padding;
+        text-align: right;
+        font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+        font-size: 14px;
+        color: @color;
+        vertical-align: top;
+        width: 70px;
+        border: 0;
+
+        span {
+          white-space: nowrap;
+          display: inline-block;
+        }
+
+        &.item-1 {
+          text-align: left;
+
+          span {
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        &.extend {
+          width: 7px;
+          padding-left: 0;
+          svg{margin-top: 5px;}
+        }
+      }
+
+      &:nth-child(n+2) {
+        td {
+          border-top: 1px solid fade(@color, 10%);
+          border-top: 1px solid #e9eaeb; //fix
+        }
+      }
+
+      &:last-child {
+        td {
+          border-bottom: 1px solid fade(@color, 10%);
+          border-bottom: 1px solid #e9eaeb; //fix
+        }
+      }
+
+      .inside {
+        width: 320px;
+      }
+    }
+
+    .s-round {
+      line-height: 0;
+    }
+
+    .s-progress {
+      width: 40px;
+      display: inline-block;
+      line-height: 0;
+    }
+  }
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<title>Dashboards DevExpress examples</title>
+</head>
+<body>
+
+	<div id="chart"></div>
+
+	<script src="./st-data.js"></script>
+
+	<script>
+	(function(){
+
+	var fruits = [
+		{ fruit: 'Apples', count: 10 },
+		{ fruit: 'Oranges', count: 12 },
+		{ fruit: 'Lemons', count: 15 },
+		{ fruit: 'Pears', count: 20 },
+		{ fruit: 'Pineapples', count: 3 },
+		{ fruit: '1Apples', count: 10 },
+		{ fruit: 'Ora2nges', count: 12 },
+		{ fruit: 'Lemons1', count: 15 },
+		{ fruit: 'Pears1', count: 20 },
+		{ fruit: 'Pineapples1', count: 3 },
+		{ fruit: 'Apples2', count: 10 },
+		{ fruit: 'Oranges22', count: 12 },
+		{ fruit: 'Lemon2s', count: 15 },
+		{ fruit: 'Pears2', count: 20 },
+		{ fruit: 'Pineapple2', count: 3 },
+		{ fruit: '1Apples2', count: 10 },
+		{ fruit: 'Ora2nges2', count: 12 },
+		{ fruit: 'Lemons12', count: 15 },
+		{ fruit: 'Pears12', count: 20 },
+		{ fruit: 'Pineapples12', count: 3 },
+		{ fruit: 'Apples3', count: 10 },
+		{ fruit: 'Oranges3', count: 12 },
+		{ fruit: 'Lemons3', count: 15 },
+		{ fruit: 'Pears3', count: 20 },
+		{ fruit: 'Pineapples3', count: 3 },
+		{ fruit: '1Apples3', count: 10 },
+		{ fruit: 'Ora2nges3', count: 12 },
+		{ fruit: 'Lemons13', count: 15 },
+		{ fruit: 'Pears13', count: 20 },
+		{ fruit: 'Pineapples13', count: 3 },
+		{ fruit: 'Apples23', count: 10 },
+		{ fruit: 'Oranges223', count: 12 },
+		{ fruit: 'Lemo3n2s', count: 15 },
+		{ fruit: 'Pears32', count: 20 },
+		{ fruit: 'Pinea3pple2', count: 3 },
+		{ fruit: '1Appl3es2', count: 10 },
+		{ fruit: 'Ora2n3ges2', count: 12 },
+		{ fruit: 'Lemon3s12', count: 15 },
+		{ fruit: 'Pear3s12', count: 20 },
+		{ fruit: 'Pinea3pples12', count: 3 },
+		
+	];
+
+	const st = new StData.init('chart', fruits);
+	st.chart();
+
+
+		// var elements = document.getElementsByTagName('dashboard');
+
+		// Array.prototype.forEach.call(elements, function(element) {
+		// 	var id = element.getAttribute('id');
+		// 	var dashboard = new StDashboard.item(id);
+		// 	dashboard.draw();
+		// });
+
+		//page
+
+		// var options= {
+		// 	id: 'dashboard',
+		// 	url: {
+		// 		page: '/api/dashboards',
+		// 		items: '/api/kpis'
+		// 	},
+		// 	headers: {
+		// 		page: {
+		// 			// 'X-EmployeeId': 281474979141152,
+		// 			'X-EmployeeId': 0,
+		// 			'X-SecretKey': '40fbdcf8-4dcf-4e50-87ec-03de17206dcd'
+		// 		},
+		// 		items: {
+		// 			// 'X-EmployeeId': 281474979141152,
+		// 			'X-EmployeeId': 0,
+		// 			'X-SecretKey': '40fbdcf8-4dcf-4e50-87ec-03de17206dcd'
+		// 		},
+		// 	},
+		// 	query: {
+		// 		page: {},
+		// 		items: {
+		// 			// 'idPosition': 281474978861087
+		// 			// 'idPosition': 281474983718117
+		// 		}
+		// 	},
+		// 	pageKey: 'CocaColaEx'
+		// }
+	})()
+	</script>
+</body>
+</html>
