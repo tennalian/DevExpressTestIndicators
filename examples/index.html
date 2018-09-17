@@ -7,60 +7,41 @@
 </head>
 <body>
 
-	<div id="chart"></div>
+	<dashboard id="sv-s1" options='{"type":"progress","colSize":"md"}' data='{"title":"Звонки","bgColor":{"value":"#f44336","text":"#fff"},"colorConfig":{"value":"93","min": "55"},"chart":{"title":"Факт","value":{"val":93,"label":"%"}},"rows":[[{"title":"Факт, ₽","value":{"val":800,"label":"руб"}},{"title":"План, ₽","value":{"val":400,"label":"тыс"}}],[{"title":"Прогноз, ₽","value":{"val":600,"label":"тыс"}},{"title":"Прогноз, %","value":{"val":30,"label":"%"}}]]}'></dashboard>
 
 	<script src="./st-data.js"></script>
 
 	<script>
 	(function(){
 
-	var fruits = [
-		{ fruit: 'Apples', count: 10 },
-		{ fruit: 'Oranges', count: 12 },
-		{ fruit: 'Lemons', count: 15 },
-		{ fruit: 'Pears', count: 20 },
-		{ fruit: 'Pineapples', count: 3 },
-		{ fruit: '1Apples', count: 10 },
-		{ fruit: 'Ora2nges', count: 12 },
-		{ fruit: 'Lemons1', count: 15 },
-		{ fruit: 'Pears1', count: 20 },
-		{ fruit: 'Pineapples1', count: 3 },
-		{ fruit: 'Apples2', count: 10 },
-		{ fruit: 'Oranges22', count: 12 },
-		{ fruit: 'Lemon2s', count: 15 },
-		{ fruit: 'Pears2', count: 20 },
-		{ fruit: 'Pineapple2', count: 3 },
-		{ fruit: '1Apples2', count: 10 },
-		{ fruit: 'Ora2nges2', count: 12 },
-		{ fruit: 'Lemons12', count: 15 },
-		{ fruit: 'Pears12', count: 20 },
-		{ fruit: 'Pineapples12', count: 3 },
-		{ fruit: 'Apples3', count: 10 },
-		{ fruit: 'Oranges3', count: 12 },
-		{ fruit: 'Lemons3', count: 15 },
-		{ fruit: 'Pears3', count: 20 },
-		{ fruit: 'Pineapples3', count: 3 },
-		{ fruit: '1Apples3', count: 10 },
-		{ fruit: 'Ora2nges3', count: 12 },
-		{ fruit: 'Lemons13', count: 15 },
-		{ fruit: 'Pears13', count: 20 },
-		{ fruit: 'Pineapples13', count: 3 },
-		{ fruit: 'Apples23', count: 10 },
-		{ fruit: 'Oranges223', count: 12 },
-		{ fruit: 'Lemo3n2s', count: 15 },
-		{ fruit: 'Pears32', count: 20 },
-		{ fruit: 'Pinea3pple2', count: 3 },
-		{ fruit: '1Appl3es2', count: 10 },
-		{ fruit: 'Ora2n3ges2', count: 12 },
-		{ fruit: 'Lemon3s12', count: 15 },
-		{ fruit: 'Pear3s12', count: 20 },
-		{ fruit: 'Pinea3pples12', count: 3 },
 
-	];
-
-	const st = new StData.init('chart', fruits);
-	// st.chart();
-	st.progress(50);
+		const data = {
+			options: {
+				type: 'progress',
+				size: 'xs'
+			},
+			data: {
+				title: 'Звонки',
+				webReport: 'link',
+				wiki: 'link',
+				colorConfig: {
+					value: 93000,
+					min: 100
+				},
+				chart: {title: '',	value: {val: 93, label: '%'}},
+				rows: [
+					[
+						{title: 'Факт, ₽', value: {val: 800, label: 'руб'}},
+						{title: 'План, ₽', value: {val: 400, label:'тыс'}}
+					],[
+						{title: 'Прогноз, ₽', value: {val: 600, label: 'тыс'}},
+						{title: 'Прогноз, %', value: {val: 30, label: '%'}}
+					]
+				]
+			}
+		}
+		var num = new StDashboard.item('sv-s1', data.options, data.data);
+		num.draw();
 
 	})()
 	</script>
