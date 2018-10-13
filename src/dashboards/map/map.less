@@ -1,0 +1,99 @@
+@map-header-height: 52px;
+@blue-color: #317dc7;
+@padding: 16px;
+@color: #242e36;
+
+.sv-dashboard.sv-geomap {
+  font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+
+  h3 {
+    color: rgba(36, 46, 54, 0.6);
+    font-family: 'SourceSansPro', 'STSansPro', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  .sv-geomap {
+    margin: 50px auto;
+  }
+
+  .item-info {
+    padding: 0 16px 16px;
+    height: auto;
+    display: block;
+
+    &.item-info-error{
+      min-height: @height*2 - @title;
+      height: @height*2 - @title;
+      padding: 0 !important;
+      display: flex;
+    }
+  }
+
+  .sv-map-header {
+    display: flex;
+    width: 100%;
+    height: @map-header-height;
+    align-items: center;
+    font-size: 14px;
+
+    .sv-map-label {
+      width: 100%;
+      text-align: right;
+      color: rgba(36, 46, 54, 0.4);
+    }
+
+    .sv-map-back {
+      color: @blue-color;
+      white-space: nowrap;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .sv-map-back--hidden {
+      visibility: hidden;
+      backface-visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  .sv-map {
+    width: 100%;
+    height: 380px;
+    border: 1px solid rgba(36, 46, 54, 0.1);
+    margin: 0 0 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sv-map-table {
+    border-top: 1px solid rgba(36, 46, 54, 0.1);
+    border-bottom: 1px solid rgba(36, 46, 54, 0.1);
+    padding: @padding 0;
+    height: 400px;
+  }
+
+  .s-table-wrap {
+    height: 350px;
+    overflow: auto;
+    width: 100%;
+  }
+
+
+  .st-progress-red {
+    .dx-trackbar-range {
+      background: #da5e51;
+      border: 1px solid #da5e51;
+    }
+  }
+
+  .st-progress-green {
+    .dx-trackbar-range {
+      background: #54c089;
+      border: 1px solid #54c089;
+    }
+  }
+}

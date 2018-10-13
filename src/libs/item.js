@@ -2,13 +2,15 @@ import '../assets/styles/item.less';
 import { isEmpty } from 'lodash';
 
 import ProgressDashboard from '../dashboards/progress/progress';
+import MapDashboard from '../dashboards/map/map';
 
-export default class StDashboard{
+export default class StDashboard {
   constructor(id, options, data) {
     this.id = id || null;
     this.options = options || null;
     this.data = data || null;
     this.loading = false;
+    this.dashboard = null;
   }
   draw() {
     let id = this.id;
@@ -17,7 +19,6 @@ export default class StDashboard{
     }
     let options;
     let data;
-    let dashboard;
 
     let element = document.getElementById(id);
 
@@ -39,13 +40,15 @@ export default class StDashboard{
     }
 
     if (options.type == 'progress') {
-      dashboard = new ProgressDashboard(id, options, data, loading);
+      this.dashboard = new ProgressDashboard(id, options, data, loading);
+    } else if (options.type == 'geomap') {
+      this.dashboard = new MapDashboard(id, options, data, loading);
     } else {
-      dashboard = null;
-      console.error('Dashboard type is undefined (id: ' + this.id + ')');
+      this.dashboard = null;
+      console.error(`Dashboard type is undefined (id: ${this.id})`);
     }
-    if (!isEmpty(dashboard)) {
-      this.id && dashboard.draw();
+    if (!isEmpty(this.dashboard)) {
+      this.id && this.dashboard.draw();
     }
   }
 
@@ -65,6 +68,11 @@ export default class StDashboard{
   setLoading() {
     this.loading = true;
     this.draw();
+  }
+
+  remove() {
+    // TODO remove listeners
+    // this.dashboard.destroy()
   }
 };
 

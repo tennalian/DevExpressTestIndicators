@@ -30,16 +30,19 @@ export default class StPageCompiler {
     this.page = [];
     this.dashboards = [];
     this.msnry = null;
+    this.cancelled = false;
   }
 
   cancelRequests() {
+    this.cancelled = true;
     this.requests.forEach(xhr => xhr.abort());
   }
 
   fetchPageData() {
     let self = this;
+    this.cancelled = false;
     let element = document.getElementById(this.options.id);
-    let loader = document.getElementById('sv-page-loader');
+    let loader = element ? element.querySelector('#sv-page-loader') : null;
     let url = this.options.url.page + '/' + this.options.pageKey;
     let requestOptions = this.getRequestOptions('page', url);
     const http = httpClient();
@@ -51,30 +54,36 @@ export default class StPageCompiler {
           self.page = response.dashboards;
         }
         if (isEmpty(response.dashboards)) {
-          element.removeChild(loader);
+          if (element && loader && element.contains(loader)) {
+            element.removeChild(loader);
+          }
           self.addPageEmpty();
           return;
         }
         let promises = self.getDataDashboards(response.dashboards);
         return Promise.all(promises)
           .then(data => {
-            if (loader && loader !== null) {
-              element.removeChild(loader);
-            };
-            forEach(data, (item, i) => {
-              let id = 'item_' + item.data.codeKey.value + '_' + i;
-              let tmp = document.createElement('div');
-              tmp.id = id;
-              element.appendChild(tmp);
-              let db = new self.stDashboardItem(id, item.options, item.data);
-              self.dashboards.push(db);
-              db.draw();
-            });
+            if (!this.cancelled) {
+              if (element && loader && element.contains(loader)) {
+                element.removeChild(loader);
+              }
+              forEach(data, (item, i) => {
+                if (item) {
+                  let id = 'item_' + item.data.codeKey.value + '_' + i;
+                  let tmp = document.createElement('div');
+                  tmp.id = id;
+                  element.appendChild(tmp);
+                  let db = new self.stDashboardItem(id, item.options, item.data);
+                  self.dashboards.push(db);
+                  db.draw();
+                }
+              });
+            }
           });
       }, error => {
-        if (loader && loader !== null) {
+        if (element && loader && element.contains(loader)) {
           element.removeChild(loader);
-        };
+        }
         self.addPageEmpty();
       });
   }
@@ -90,7 +99,7 @@ export default class StPageCompiler {
       let promise = http.get(requestOptions.url, requestOptions.headers).then(response => {
         return {
           options: {
-            type: dashboard.type.toLowerCase() === '13' ? 'geomap' : dashboard.type.toLowerCase(),
+            type: dashboard.type.toLowerCase(),
             colSize: self.convertSize(dashboard.width),
             rowSize: self.convertSize(dashboard.height)
           },
@@ -109,7 +118,7 @@ export default class StPageCompiler {
       }, error => {
         return {
           options: {
-            type: dashboard.type.toLowerCase() === '13' ? 'geomap' : dashboard.type.toLowerCase(),
+            type: dashboard.type.toLowerCase(),
             colSize: self.convertSize(dashboard.width),
             rowSize: self.convertSize(dashboard.height)
           },
@@ -177,6 +186,8 @@ export default class StPageCompiler {
       output = `В этом году`;
     } else if (period.type === 'PreviousDay') {
       output = `Вчера`;
+    } else if (period.type === 'CurrentFinMonth') {
+      output = `Текущий финансовый месяц`;
     } else if ((period.type === 'LastNDays') && (period.value > 1)) {
       output = `За последние ${period.value} дн.`;
     } else if ((period.type === 'LastNWeeks') && (period.value > 1)) {
@@ -197,7 +208,9 @@ export default class StPageCompiler {
     spinner.className = 'spinner';
     loader.id = 'sv-page-loader';
     loader.appendChild(spinner);
-    element.appendChild(loader);
+    if (element) {
+      element.appendChild(loader);
+    }
   }
 
   addPageEmpty() {
@@ -205,17 +218,19 @@ export default class StPageCompiler {
     let emptyError = document.createElement('div');
     emptyError.innerHTML = `<h3>Нет данных</h3>`;
     emptyError.id = 'sv-page-empty';
-    element.appendChild(emptyError);
+    if (element) {
+      element.appendChild(emptyError);
+    }
   }
 
   updatePage(updateHandler) {
     let self = this;
     let element = document.getElementById(this.options.id);
-    let emptyError = document.getElementById('sv-page-empty');
+    let emptyError = element ? element.querySelector('#sv-page-empty') : null;
     return updateHandler.then(options => {
-      if (emptyError && emptyError !== null) {
+      if (element && emptyError && element.contains(emptyError)) {
         element.removeChild(emptyError);
-      };
+      }
       if (options && !isEmpty(options)) {
         self.options.headers = (options.headers && options.headers.page && options.headers.items) ? assign({}, self.options.headers, options.headers) : self.options.headers;
         self.options.url = (options.url && options.url.page && options.url.items) ? assign({}, self.options.url, options.url) : self.options.url;
@@ -293,11 +308,11 @@ export default class StPageCompiler {
 
   draw() {
     let element = document.getElementById(this.options.id);
-    let emptyError = document.getElementById('sv-page-empty');
+    let emptyError = element ? element.querySelector('#sv-page-empty') : null;
     element.className = 'sv-page';
-    if (emptyError && emptyError !== null) {
+    if (element && emptyError && element.contains(emptyError)) {
       element.removeChild(emptyError);
-    };
+    }
     this.addPageLoader();
     this.fetchPageData().then(() => this.initMasonry());
   }

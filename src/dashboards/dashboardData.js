@@ -1,4 +1,7 @@
-import { forEach, includes, isEmpty, map, cloneDeep, clone, uniq, filter, max, sortBy, size, maxBy, property } from 'lodash';
+import { forEach, includes, isEmpty, map, assign, cloneDeep, clone, uniq, filter, max, sortBy, size, maxBy, property, concat, chain, find } from 'lodash';
+import * as REGIONS_DATA from '../assets/mapdata/regions.json';
+
+
 export default class DashboardData {
   constructor(type, data) {
     this.data = data;
@@ -6,89 +9,62 @@ export default class DashboardData {
   }
 
   getData() {
-    const charts = ['histogram', 'doublehistogram', 'doublehistogramwithouttrand', 'chart']
     if (this.type === 'progress') {
       return this.convertProgress();
     }
 
-    if (this.type === 'table') {
-      return this.convertTable();
-    }
-
-    if (this.type === 'number') {
-      return this.convertNumber();
-    }
-
-    if (includes(charts, this.type)) {
-      return this.convertChart();
-    }
-
-    if (this.type === 'pie') {
-      return this.convertPie();
-    }
-
-    if (this.type === 'treemap') {
-      return this.convertTreemap();
+    if (this.type === 'geomap') {
+      return this.convertMap();
     }
 
     return {rows: []};
   }
 
-  convertTable() {
-    let self = this;
-    let dashboard = {
-      type: 'table',
-      data: {
-        rows: []
-      }
-    };
-
+  convertMap() {
+    let regions = [];
     if (!isEmpty(this.data.results)) {
-      let aliases = this.getAliaces();
-      forEach(this.data.results, function(item) {
-        let row = [
-          {
-            value: {
-              val: item.Measure,
-              label: ''
-            },
-            title: aliases.Measure
-          },{
-            value: {
-              val: Math.round(item.PercentValue) || 0,
-              label: '%'
-            },
-            title: aliases.PercentValue
-          },{
-            value: {
-              val: self.convertTableValue(+item.Value),
-              label: ''
-            },
-            title: aliases.Fact
-          },{
-            value: {
-              val: self.convertTableValue(+item.TargetValue),
-              label: ''
-            },
-            title: aliases.Plan
-          }
-        ];
-
-        dashboard.data.rows.push(row);
-      });
-
-      dashboard.data.extend = {
-        val: true,
-        min: 100,
-        label: aliases.PercentValue
-      };
-
-      dashboard.data.sorted = {
-        label: aliases.Measure,
-        type: 'up'
-      };
+      regions = assign(REGIONS_DATA, { features: map(REGIONS_DATA.features, d => {
+        const childrens = chain(this.data.results)
+          .filter(item => item.Measure.toLowerCase() === d.properties.aoguid)
+          .map(item => {
+            return {
+              Measure: item.SubSetName,
+              Value: item.Value,
+              TargetValue: item.TargetValue,
+              PredictionPercent: item.PredictionPercent,
+              Prediction: item.Prediction,
+              PercentValue: item.PercentValue,
+            }
+          })
+          .value();
+        const itemData = find(this.data.results, item => item.MeasureObjectId.toLowerCase() === d.properties.aoguid) || {};
+        if (isEmpty(itemData)) {
+          itemData.Value = childrens.reduce((sum, current) => sum + current.Value, 0) || 0;
+          itemData.TargetValue = childrens.reduce((sum, current) => sum + current.TargetValue, 0) || 0;
+          itemData.PercentValue = (itemData.TargetValue) ? Math.round((itemData.Value / itemData.TargetValue) * 100) : (itemData.Value > 0 ? 100 : 0);
+        }
+        d.properties.data = {
+          results: [{
+            Measure: d.properties.name,
+            Value: itemData.Value,
+            TargetValue: itemData.TargetValue,
+            Prediction: itemData.Prediction || 0,
+            PredictionPercent: itemData.PredictionPercent || 0,
+            PercentValue: itemData.PercentValue || 0,
+            childrens
+          }]
+        };
+        return d;
+      })});
     }
 
+    // const convert = map(CONVERT_DATA.data, item => {});
+
+    const dashboard = {
+      type: 'geomap',
+      data: regions,
+      aliaces: this.getAliaces()
+    };
     return dashboard;
   }
 
@@ -130,7 +106,7 @@ export default class DashboardData {
               title: aliases.PredictionPercent,
               value: {
                 val: Math.floor(+item.PredictionPercent),
-                label: ''
+                label: '%'
               }
             },{
               title: aliases.Prediction,
@@ -144,247 +120,33 @@ export default class DashboardData {
     return dashboard;
   }
 
-  convertNumber() {
-    let dashboard = {
-      type: 'number',
-      data: {
-        rows: []
-      }
-    };
-
-    if (!isEmpty(this.data.results)) {
-      let item = this.data.results[0];
-      let value = (item.Value) ? +Math.floor(+item.Value).toFixed(0) : 0;
-
-      dashboard.data.rows.push(this.getTypeValue(value));
-    }
-    return dashboard;
-  }
-
-  convertChart() {
-    const self = this;
-    const type = (this.type === 'chart') ? 'chart' : 'histogram';
-    let dashboard = {
-      type: type,
-      data: {
-        rows: []
-      }
-    };
-
-    if (!isEmpty(this.data.results)) {
-      let convert = this.convertChartData();
-      let row_prev = {
-        title: (this.data.aliases && self.convertChartLegengTitle('Plan')) ? self.convertChartLegengTitle('Plan') : new Date().getFullYear() - 1,
-        values: []
-      };
-
-      let row_cur = {
-        title: (this.type !== 'doublehistogram') ? '' : (this.data.aliases && self.convertChartLegengTitle('Fact')) ? self.convertChartLegengTitle('Fact') : new Date().getFullYear(),
-        values: []
-      };
-
-      forEach(this.data.results, function(item, i) {
-        let rect_сur = {
-          label: (self.type !== 'doublehistogram') ? self.getChartLabel(item.Measure) : item.Measure,
-          val: +convert[i].Value,
-          popup: {
-            label: (self.type !== 'doublehistogram') ? item.Measure  : item.Measure + ', ' + row_cur.title,
-            val: +item.Value
-          }
-        };
-        row_cur.values.push(rect_сur);
-
-        let rect_prev = {
-          label: item.Measure,
-          val: +convert[i].TargetValue,
-          popup: {
-            label: item.Measure + ', ' + row_prev.title,
-            val: +item.TargetValue
-          }
-        };
-        row_prev.values.push(rect_prev);
-      });
-
-      if (this.type === 'doublehistogram' || this.type === 'doublehistogramwithouttrand') {
-        if (size(row_prev.values) > 0) {
-          dashboard.data.rows.push(row_prev, row_cur);
-        }
-        dashboard.data.hiddenTrend = (this.type === 'doublehistogramwithouttrand');
-      } else {
-        dashboard.data.rows.push(row_cur);
-        dashboard.data.hiddenTrend = true;
-      }
-    }
-
-    return dashboard;
-  }
-
-  convertPie() {
-    let self = this;
-    let dashboard = {
-      type: 'pie',
-      data: {
-        rows: []
-      }
-    };
-
-    if (!isEmpty(this.data.results)) {
-      let aliases = this.getAliaces();
-
-      let groups = uniq(map(cloneDeep(this.data.results), item => {
-        return item.Measure;
-      }));
-      let results = map(groups, group => {
-        let items = filter(cloneDeep(this.data.results), item => item.Measure == group);
-        let values = map(items, item => item.Value);
-        let maxValues = max(values);
-        let convertValues = self.getConvertPieValues(values, maxValues);
-        let val = 0;
-        let extend = [];
-        forEach(items, (item, i) => {
-          val += item.Value;
-          let ext = {
-            label: item.SubSetName,
-            val: convertValues[i],
-            popup: Math.floor(+item.Value),
-          };
-          extend.push(ext)
-        });
-        return {
-          label: group,
-          val,
-          extend
-        }
-      });
-
-      const resultsMaxValue = max(map(results, r => r.val));
-      if (resultsMaxValue > 0) {
-        results = sortBy(results, 'val').reverse();
-        forEach(results, (item, i) => {
-          if (i < 5) {
-            dashboard.data.rows.push(item);
-          }
-        });
-      }
-    }
-
-    return dashboard;
-  }
-
-  convertTreemap() {
-    let self = this;
-    let dashboard = {
-      type: 'treemap',
-      data: {
-        rows: [{
-          name: 'parent',
-          children: []
-        }]
-      }
-    };
-
-    if (!isEmpty(this.data.results)) {
-      let aliases = this.getAliaces();
-      let groups = uniq(map(cloneDeep(this.data.results), item => {
-        return item.Measure;
-      }));
-
-      let results = map(groups, (group, i) => {
-        let items = filter(cloneDeep(this.data.results), item => item.Measure == group);
-        let children = [];
-        forEach(items, (item, i) => {
-          let child = {
-            name: item.SubSetName || '',
-            value: item.Value.toFixed(2),
-          };
-          children.push(child)
-        });
-
-        let value = 0;
-        forEach(children, child => {
-          value += +child.value;
-        });
-
-        return {
-          value,
-          name: i,
-          title: group || 'Group' + i,
-          children
-        }
-      });
-      dashboard.data.rows[0].children = results;
-    }
-
-    return dashboard;
-  }
-
   ////////
 
   getTypeValue(val) {
     let label = '';
     if (val >= 1000) {
       label = 'тыс';
-      val = (val / 1000).toFixed(0);
+      if (val / 1000 >= 100) {
+        val = (val / 1000).toFixed(0);
+      } else {
+        val = (val / 1000 >= 10) ? (val / 1000).toFixed(1) : (val / 1000).toFixed(2);
+      }
+
       if (val > 1000) {
         label = 'млн';
-        val = (val / 1000).toFixed(2);
+        val = (val / 1000 >= 10) ? (val / 1000).toFixed(1) : (val / 1000).toFixed(2);
       }
     } else {
-      val = Math.floor(val);
+      // val = Math.floor(val);
+      val = val;
     }
-    return {val, label};
-  }
 
-  convertChartData() {
-    let convert = map(this.data.results, clone);
-    let maxValue = maxBy(convert, function(o) { return +o.Value; });
-    let maxTargetValue = maxBy(convert, function(o) { return +o.TargetValue; });
-    convert = this.getConvertChartValues(convert, maxValue.Value, 'Value');
-    convert = this.getConvertChartValues(convert, maxTargetValue.TargetValue, 'TargetValue');
-    return convert;
+    return {val, label};
   }
 
   convertTableValue(value) {
     value = (value >= 100) ? Math.floor(value) : value;
     return String(value).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-  }
-
-  convertChartLegengTitle(item) {
-    return (property(item)(this.data.aliases[0]));
-  }
-
-  getConvertChartValues(data, max, property) {
-    if (max >= 100) {
-      data.map(item => {
-        if ((item[property] < 10) && (item[property] >= 1)) {
-          item[property] = +item[property] / 10;
-        } else {
-          item[property] = Math.floor(+item[property] / 10);
-        }
-        return item;
-      });
-      let newMax = maxBy(data, function(o) { return +o[property]; });
-      data = this.getConvertChartValues(data, newMax[property], property);
-    }
-    return data;
-  }
-
-  getConvertPieValues(items, m) {
-    if (m >= 100) {
-      let newItems = [];
-      forEach(items, item => {
-        item = Math.floor(+item);
-        if ((item < 10) && (item >= 1)) {
-          item = item / 10;
-        } else {
-          item = Math.floor(item / 10);
-        }
-        newItems.push(item);
-      });
-      let newMax = max(newItems);
-      items = this.getConvertPieValues(newItems, newMax);
-    }
-    return items;
   }
 
   getProgressChart(percent) {
@@ -393,14 +155,6 @@ export default class DashboardData {
   }
 
   getChartLabel(item) {
-    if (item.length > 8) {
-      let arr = item.split(' ');
-      let name = '';
-      forEach(arr, el => {
-        name += el[0];
-      });
-      item = name.toUpperCase();
-    }
     return item;
   }
 
