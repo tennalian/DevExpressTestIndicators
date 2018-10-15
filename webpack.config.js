@@ -57,14 +57,6 @@ module.exports = {
       hot: true,
       historyApiFallback: true,
       noInfo: true,
-      proxy: {
-        '/api': {
-          target: 'http://dbsrv.systtech.ru:8009',
-          changeOrigin: true,
-          auth: "admin:355612"
-          // secure: false
-        }
-      }
     },
     plugins: [
       new webpack.ProvidePlugin({

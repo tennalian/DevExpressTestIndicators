@@ -7,7 +7,8 @@
     .sv-progress-line{
       width: 100%;
       position: relative;
-      padding: 16px;
+      padding: 0 16px;
+      margin: 24px 0;
 
       .dx-trackbar-container {
         border: 0;
@@ -28,12 +29,13 @@
       }
     }
     .sv-progress-chart{
-      width: 40%;
-      height: 100%;
+      width: 200px;
+      height: 150px;
     }
     .total{
-      width: 60%;
-      padding: 12px 0 0;
+      width: calc(~'100% - 200px');
+      height: 150px;
+      padding: 24px;
       display: flex;
       flex-wrap: wrap;
       align-items: flex-end;
@@ -55,14 +57,9 @@
             display: block;
           }
           span{
-            display: block;
-            line-height: .1;
-          }
-          svg{
-            max-width: 135px;
             height: 36px;
             font-size: 36px;
-            .ls-progress-text{
+            & ~ span {
               font-size: 24px;
             }
           }
@@ -119,23 +116,21 @@
   }
 }
 
-@media only screen and (max-width: 900px) {
-  .sv-dashboard.sv-progress {
-    &.sv-col-lg, &.sv-col-max{
-      .item-info {
-        .total{
-          .row-list{
-            .row-item{
-              svg{
-                max-width: 100px;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+// @media only screen and (max-width: 900px) {
+//   .sv-dashboard.sv-progress {
+//     &.sv-col-lg, &.sv-col-max{
+//       .item-info {
+//         .total{
+//           .row-list{
+//             .row-item{
+
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
 
 @media only screen and (max-width: 660px) {
@@ -156,9 +151,8 @@
             .row-item{
               width: 50%;
               margin: 0;
-              svg{
+              span {
                 height: 30px;
-                max-width: 135px;
               }
             }
           }

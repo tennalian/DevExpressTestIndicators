@@ -1,4 +1,4 @@
-import { forEach, includes, template, isEmpty, assign } from 'lodash';
+import { includes, template, isEmpty, assign } from 'lodash';
 import templateBody from './template';
 import Dashboard from '../main';
 import DashboardData from '../dashboardData';
@@ -34,29 +34,29 @@ export default class ProgressDashboard extends Dashboard{
   }
 
   drawChart() {
-    $(`#${this.id} .sv-progress-chart`).dxCircularGauge({
-        scale: {
-            startValue: 0,
-            endValue: 100,
-            tickInterval: 100,
-            label: {
-              customizeText: () => ''
-            }
+    if (this.data.chart.value.val < 50) {
+      $(`#${this.id} .sv-progress-chart`).dxBarGauge({
+        startValue: 0,
+        endValue: 100,
+        tickInterval: 100,
+        label: { visible: false },
+        tooltip: {
+          enabled: true,
+          customizeTooltip: (arg) => `${arg}%`
         },
-        value: this.data.chart.value.val,
-        title: {
-            text: `${this.data.chart.value.val} ${this.data.chart.value.label}`,
-            horizontalAlignment: "center",
-            verticalAlignment: "bottom",
-            font: {
-                size: 30,
-                color: "#CFB53B"
-            },
-            margin: {
-                top: 25
-            }
-        }
-    });
+        values: [this.data.chart.value.val]
+      });
+    } else {
+      $(`#${this.id} .sv-progress-chart`).dxCircularGauge({
+        scale: {
+          startValue: 0,
+          endValue: 100,
+          tickInterval: 100,
+          label: { visible: false }
+        },
+        value: this.data.chart.value.val
+      });
+    }
   }
 
   getTemplate() {
@@ -97,6 +97,8 @@ export default class ProgressDashboard extends Dashboard{
     };
 
     let tmplOptions = assign(defaultOptions, options);
+
+    console.log(this.data);
 
     return tmplOptions;
   }
