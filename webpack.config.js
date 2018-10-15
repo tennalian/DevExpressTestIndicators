@@ -7,7 +7,7 @@ module.exports = {
       path: path.resolve(__dirname, 'build'),
       filename: "st-data.js",
       libraryTarget: "umd",
-      library: "StDashboard",
+      library: "StDashboardDev",
     },
     module: {
       rules: [
