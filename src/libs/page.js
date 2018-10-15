@@ -153,6 +153,8 @@ export default class StPageCompiler {
       queries = Object.keys(fetchQueries)
         .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(fetchQueries[k]))
         .join('&');
+
+      console.log(queries)
     }
     const url = (queries.length > 0) ? inputUrl + '?' + queries : inputUrl;
     return { headers, url };
